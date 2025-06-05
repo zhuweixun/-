@@ -417,7 +417,7 @@
             "店铺限商品东券", "自营商家联合按比例承担优惠劵", "联合优惠券", "店铺京券", 
             "限品类京券", "限SKU礼金", "返现", "送京豆", 
             "返红包", "返京券", "膨胀金优惠", "PLUS会员专享立减", "店铺首购礼金", 
-            "普通东券", "官方立减", "单品折扣", "国家以旧换新补贴","订单改价-减少", "政府补贴（含国补、云闪付国补等）"
+            "普通东券", "官方立减", "单品折扣", "国家以旧换新补贴","订单改价-减少", "政府补贴（含国补、云闪付国补等）", "膨胀金-权益金-pop商家承担"
         ];
         
         // DOM 加载完成后执行
@@ -509,53 +509,61 @@
         });
         
         // 解析优惠信息文本
-        function parseDiscountsText(orderType, text) {
-            const lines = text.trim().split('\n');
-            const validDiscounts = [];
-            const invalidDiscounts = [];
-            
-            lines.forEach(line => {
-                if (!line.trim()) return;
-                
-                // 处理编号+优惠类型的情况，提取出真正的优惠类型
-                let cleanedLine = line;
-                // 改进的正则表达式，可以处理更复杂的前缀格式
-                const regex = /^([a-zA-Z0-9]+|.*?券明细)(\s+)(.*)$/;
-                const match = cleanedLine.match(regex);
-                if (match && match[3]) {
-                    cleanedLine = match[3];
-                }
-                
-                // 尝试分割优惠类型和金额
-                const parts = cleanedLine.split(/\t|\s+/);
-                if (parts.length < 2) {
-                    invalidDiscounts.push({ line, error: '格式错误，需包含优惠类型和金额' });
-                    return;
-                }
-                
-                const type = parts[0].trim();
-                const amountStr = parts[1].trim();
-                const amount = parseFloat(amountStr);
-                
-                if (isNaN(amount)) {
-                    invalidDiscounts.push({ line, error: '金额格式不正确' });
-                    return;
-                }
-                
-                // 特殊处理"订单改价-减少"优惠类型
-                if (type === "订单改价-减少") {
-                    if (orderType === "comparison") {
-                        invalidDiscounts.push({ line, error: '比价订单中不应包含"订单改价-减少"优惠' });
-                        return;
-                    }
-                } else if (!discountTypes.includes(type)) {
-                    invalidDiscounts.push({ line, error: '无效的优惠类型' });
-                    return;
-                }
-                
-                validDiscounts.push({ type, amount });
-            });
-            
+function parseDiscountsText(orderType, text) {
+    const lines = text.trim().split('\n');
+    const validDiscounts = [];
+    const invalidDiscounts = [];
+    
+    lines.forEach(line => {
+        if (!line.trim()) return;
+        
+        // 处理编号+优惠类型的情况，提取出真正的优惠类型
+        let cleanedLine = line;
+        // 改进的正则表达式，可以处理更复杂的前缀格式，包括中文
+        const regex = /^([a-zA-Z0-9_#\u4e00-\u9fa5]+券明细)(\s+)(.*)$/;
+        const match = cleanedLine.match(regex);
+        if (match && match[3]) {
+            cleanedLine = match[3];
+        } else {
+            // 尝试更通用的前缀匹配
+            const generalRegex = /^([a-zA-Z0-9_#]+)(\s+)(.*)$/;
+            const generalMatch = cleanedLine.match(generalRegex);
+            if (generalMatch && generalMatch[3]) {
+                cleanedLine = generalMatch[3];
+            }
+        }
+        
+        // 尝试分割优惠类型和金额
+        const parts = cleanedLine.split(/\t|\s+/);
+        if (parts.length < 2) {
+            invalidDiscounts.push({ line, error: '格式错误，需包含优惠类型和金额' });
+            return;
+        }
+        
+        const type = parts[0].trim();
+        const amountStr = parts[1].trim();
+        let amount = parseFloat(amountStr);
+        
+        if (isNaN(amount)) {
+            invalidDiscounts.push({ line, error: '金额格式不正确' });
+            return;
+        }
+        
+        // 特殊处理"订单改价-减少"优惠类型
+        if (type === "订单改价-减少") {
+            if (orderType === "comparison") {
+                invalidDiscounts.push({ line, error: '比价订单中不应包含"订单改价-减少"优惠' });
+                return;
+            }
+            // 将负数转换为正数
+            amount = Math.abs(amount);
+        } else if (!discountTypes.includes(type)) {
+            invalidDiscounts.push({ line, error: '无效的优惠类型' });
+            return;
+        }
+        
+        validDiscounts.push({ type, amount });
+    });
             // 显示解析结果
             const previewContainer = document.getElementById(`${orderType}-discounts-preview`);
             const validContainer = document.getElementById(`${orderType}-valid-discounts`);
