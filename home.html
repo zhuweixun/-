@@ -15,7 +15,8 @@
                         secondary: '#10B981',
                         accent: '#8B5CF6',
                         dark: '#1E293B',
-                        light: '#F8FAFC'
+                        light: '#F8FAFC',
+                        danger: '#EF4444', // 新增危险色用于拉黑功能
                     },
                     fontFamily: {
                         inter: ['Inter', 'sans-serif'],
@@ -122,7 +123,7 @@
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-dark mb-2">商家批量解约处理工具</h3>
-                    <p class="text-gray-600 mb-4">批量完成商家ID提取以及险种ID批录入</p>
+                    <p class="text-gray-600 mb-4">批量完成商家险解约操作</p>
                     <a href="calculator2.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-secondary hover:bg-secondary/90 transition-all">
                         <i class="fa fa-arrow-right mr-2"></i>
                         打开工具
@@ -146,12 +147,32 @@
                     </a>
                 </div>
             </div>
+
+            <!-- 商家险批量拉黑工具卡片 -->
+            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                <div class="h-40 bg-danger/10 flex items-center justify-center">
+                    <div class="icon-container">
+                        <i class="fa fa-ban text-icon-6xl text-danger"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-dark mb-2">商家险批量拉黑工具</h3>
+                    <p class="text-gray-600 mb-4">批量完成商家险拉黑操作</p>
+                    <a href="calculator4.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-danger hover:bg-danger/90 transition-all">
+                        <i class="fa fa-arrow-right mr-2"></i>
+                        打开工具
+                    </a>
+                </div>
+            </div>
         </div>
         
-        <!-- 数据统计 -->
-        <div class="mt-16 bg-white rounded-2xl p-6 card-shadow">
-            <h3 class="text-xl font-bold text-dark mb-6">更多更新内容开发中</h3>
-            <p class="text-center text-xl text-gray-600">敬请期待~~~~</p>
+        <!-- 更多功能提示 -->
+        <div class="mt-16 bg-white rounded-2xl p-8 card-shadow text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                <i class="fa fa-cog fa-spin text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-2">更多功能开发中</h3>
+            <p class="text-gray-600 text-lg">敬请期待~~~~</p>
         </div>
     </main>
     
