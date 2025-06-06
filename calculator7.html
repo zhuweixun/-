@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>延保复购补贴计算工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        success: '#00B42A',
+                        danger: '#F53F3F',
+                        warning: '#FF7D00',
+                        info: '#86909C',
+                        light: '#F2F3F5',
+                        dark: '#1D2129',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+                        'hover': '0 8px 30px rgba(0, 0, 0, 0.12)',
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+            }
+            .gradient-success {
+                background: linear-gradient(135deg, #00B42A 0%, #00A854 100%);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+    <!-- 新增返回按钮 -->
+    <a href="home.html" class="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full shadow-lg transition-all flex items-center justify-center z-20">
+        <i class="fa fa-arrow-left mr-2"></i> 返回首页
+    </a>
+    <!-- 导航栏 -->
+    <header class="gradient-bg text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-calculator text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold">延保复购补贴计算工具</h1>
+            </div>
+            <nav>
+                <ul class="hidden md:flex space-x-6">
+                    <li><a href="#" class="hover:text-light transition-custom">首页</a></li>
+                    <li><a href="#" class="hover:text-light transition-custom">使用指南</a></li>
+                    <li><a href="#" class="hover:text-light transition-custom">常见问题</a></li>
+                </ul>
+                <button class="md:hidden text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- 介绍卡片 -->
+        <div class="bg-white rounded-xl shadow-card p-6 mb-8 transform hover:shadow-hover transition-custom">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fa fa-info-circle text-primary mr-2"></i>
+                延保复购补贴计算工具介绍
+            </h2>
+            <p class="text-gray-700 mb-4">
+                本工具可帮助您快速计算订单的实付款，支持多种优惠类型的计算，包括有效期京豆、京豆、3C以旧换新旧机抵扣金额等。只需输入订单信息和优惠详情，即可自动计算出最终实付款。
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div class="bg-light rounded-lg p-4">
+                    <i class="fa fa-check-circle text-success text-xl mb-2"></i>
+                    <h3 class="font-semibold mb-1">自动识别优惠</h3>
+                    <p class="text-sm text-gray-600">系统自动识别有效优惠类型，排除无效输入</p>
+                </div>
+                <div class="bg-light rounded-lg p-4">
+                    <i class="fa fa-calculator text-primary text-xl mb-2"></i>
+                    <h3 class="font-semibold mb-1">精准计算</h3>
+                    <p class="text-sm text-gray-600">按照复杂优惠规则精确计算实付款</p>
+                </div>
+                <div class="bg-light rounded-lg p-4">
+                    <i class="fa fa-shield text-warning text-xl mb-2"></i>
+                    <h3 class="font-semibold mb-1">补贴处理</h3>
+                    <p class="text-sm text-gray-600">智能处理不同类型的补贴差异</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单表单 -->
+        <div class="bg-white rounded-xl shadow-card p-6 mb-8 transform hover:shadow-hover transition-custom">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-file-text-o text-primary mr-2"></i>
+                订单信息
+            </h2>
+            <form id="order-form" class="space-y-4">
+                <div class="mb-4">
+                    <label for="order-number" class="block text-sm font-medium text-gray-700 mb-1">订单号</label>
+                    <input type="text" id="order-number" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-custom" placeholder="请输入订单号（选填）">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="product-price" class="block text-sm font-medium text-gray-700 mb-1">商品金额</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fa fa-rmb"></i>
+                        </span>
+                        <input type="number" id="product-price" class="pl-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-custom" placeholder="请输入商品金额" required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm text-red-500 font-bold mb-1">优惠信息（复制企业门户内对应优惠项目名称和金额粘贴即可，回车换行输入下一项）</label>
+                    <label class="block text-sm text-red-500 font-bold mb-1">特殊信息1：系统计算运费位置如有金额，需一起放入，例如：系统计算运费	1.77</label>
+                    <label class="block text-sm text-red-500 font-bold mb-1">特殊信息2：如有部分退款，需将退款信息底下的支付类型和退款金额一起复制下放入即可其他信息不要，例如：在线支付	295.09</label>
+                    <div class="relative">
+                        <textarea id="discounts-text" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-custom" placeholder="请粘贴完整的优惠明细内详情即可空格换行，格式如：
+200454023190	店铺首购礼金	50.00
+0	3C以旧换新补贴（京东/POP商家承担）	200.00
+0	3C以旧换新旧机抵扣金额	48.00"></textarea>
+                        <div class="absolute bottom-2 right-2 text-xs text-gray-500">
+                            <button type="button" id="show-valid-discounts" class="text-primary hover:underline">查看有效优惠类型</button>
+                        </div>
+                    </div>
+                    <div id="discounts-preview" class="mt-2 hidden">
+                        <div class="text-sm font-medium text-gray-700 mb-1">有效优惠：</div>
+                        <div id="valid-discounts" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                        <div id="invalid-discounts" class="space-y-1 mt-2"></div>
+                        <div id="excluded-discounts" class="space-y-1 mt-2"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- 计算按钮 -->
+        <div class="text-center mb-8 flex justify-center space-x-4">
+            <button id="calculate-btn" class="gradient-bg text-white px-8 py-3 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-custom font-medium text-lg flex items-center">
+                <i class="fa fa-calculator mr-2"></i> 开始计算
+            </button>
+            <button id="reset-btn" class="gradient-success text-white px-8 py-3 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-custom font-medium text-lg flex items-center">
+                <i class="fa fa-refresh mr-2"></i> 重置
+            </button>
+        </div>
+        
+        <!-- 结果展示 -->
+        <div id="result-section" class="hidden">
+            <div class="bg-white rounded-xl shadow-card p-6 mb-8 transform hover:shadow-hover transition-custom">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fa fa-bar-chart text-primary mr-2"></i>
+                    计算结果
+                </h2>
+                
+                <div class="bg-light rounded-lg p-6 mb-6">
+                    <h3 class="font-semibold mb-4 text-primary flex items-center">
+                        <i class="fa fa-file-text-o mr-2"></i>
+                        订单 <span id="order-number-display" class="ml-2 text-sm font-normal text-gray-500"></span>
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">商品金额:</span>
+                            <span id="product-price-display" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">保留优惠金额:</span>
+                            <span id="excluded-discount-total-display" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">扣除优惠金额:</span>
+                            <span id="applied-discount-total-display" class="font-medium"></span>
+                        </div>
+                        <div class="border-t border-gray-200 my-3 pt-3">
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-lg">订单实付款:</span>
+                                <span id="final-price-display" class="font-bold text-2xl"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 优惠明细 -->
+                <div class="bg-white rounded-xl shadow-card p-6 mb-8 transform hover:shadow-hover transition-custom">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-list-ul text-primary mr-2"></i>
+                        优惠明细
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 保留的优惠 -->
+                        <div>
+                            <h3 class="font-semibold mb-3 text-primary flex items-center">
+                                <i class="fa fa-check-circle mr-2"></i>
+                                保留的优惠（不参与计算）
+                            </h3>
+                            <div id="excluded-discount-details" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                <!-- 保留的优惠明细将在这里动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 扣除的优惠 -->
+                        <div>
+                            <h3 class="font-semibold mb-3 text-secondary flex items-center">
+                                <i class="fa fa-minus-circle mr-2"></i>
+                                扣除的优惠（参与计算）
+                            </h3>
+                            <div id="applied-discount-details" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                <!-- 扣除的优惠明细将在这里动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">延保复购补贴计算工具</h3>
+                    <p class="text-gray-400 text-sm">
+                        创建本工具旨在帮助大家快速准确地计算订单实付款，不做他用。
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">快速链接</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition-custom"><i class="fa fa-home mr-2"></i>首页</a></li>
+                        <li><a href="#" class="hover:text-white transition-custom"><i class="fa fa-book mr-2"></i>使用指南</a></li>
+                        <li><a href="#" class="hover:text-white transition-custom"><i class="fa fa-question-circle mr-2"></i>常见问题</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">联系方式</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> erp：zhuweixun1</li>
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> 邮箱：zhuweixun1@jd.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> 电话：18996494939</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 版权所有·商家险客服部朱唯迅</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 有效优惠类型模态框 -->
+    <div id="valid-discounts-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">有效优惠类型列表</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-2 max-h-80 overflow-y-auto">
+                <!-- 有效优惠类型将在这里动态生成 -->
+            </div>
+            <div class="mt-4 text-center">
+                <button id="confirm-modal" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-custom">
+                    确认
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 不参与计算的优惠类型列表
+        const excludedDiscountTypes = [
+            "有效期京豆", "京豆", "3C以旧换新旧机抵扣金额", "钢镚", 
+            "超级红包", "京东购物卡本金", "红包", "E卡", "礼品卡", "领货码", "plus免运权益"
+        ];
+        
+        // DOM 加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化有效优惠类型模态框
+            const modalContent = document.querySelector('#valid-discounts-modal > div > div:nth-child(2)');
+            excludedDiscountTypes.forEach(type => {
+                const item = document.createElement('div');
+                item.className = "p-2 bg-light rounded hover:bg-gray-200 transition-custom";
+                item.textContent = type;
+                modalContent.appendChild(item);
+            });
+            
+            // 显示有效优惠类型
+            document.getElementById('show-valid-discounts').addEventListener('click', function() {
+                document.getElementById('valid-discounts-modal').classList.remove('hidden');
+            });
+            
+            // 关闭模态框
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('valid-discounts-modal').classList.add('hidden');
+            });
+            
+            // 确认并关闭模态框
+            document.getElementById('confirm-modal').addEventListener('click', function() {
+                document.getElementById('valid-discounts-modal').classList.add('hidden');
+            });
+            
+            // 点击模态框外部关闭
+            document.getElementById('valid-discounts-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            
+            // 监听优惠信息文本框变化，实时解析
+            const discountsText = document.getElementById('discounts-text');
+            
+            discountsText.addEventListener('input', function() {
+                parseDiscountsText(this.value);
+            });
+            
+            // 初始解析
+            parseDiscountsText(discountsText.value);
+            
+            // 计算按钮事件
+            document.getElementById('calculate-btn').addEventListener('click', calculateFinalPrice);
+
+            // 重置按钮事件
+            document.getElementById('reset-btn').addEventListener('click', function() {
+                // 重置订单表单
+                document.getElementById('order-number').value = '';
+                document.getElementById('product-price').value = '';
+                document.getElementById('discounts-text').value = '';
+                
+                // 隐藏结果区域
+                document.getElementById('result-section').classList.add('hidden');
+                
+                // 隐藏优惠预览
+                document.getElementById('discounts-preview').classList.add('hidden');
+                
+                // 清空有效和无效优惠列表
+                document.getElementById('valid-discounts').innerHTML = '';
+                document.getElementById('invalid-discounts').innerHTML = '';
+                document.getElementById('excluded-discounts').innerHTML = '';
+            });
+        });
+        
+        // 解析优惠信息文本
+        function parseDiscountsText(text) {
+            const lines = text.trim().split('\n');
+            const validDiscounts = [];
+            const invalidDiscounts = [];
+            const excludedDiscounts = [];
+            
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                
+                // 处理包含编号的格式
+                let type, amount;
+                // 尝试匹配 "编号 优惠类型 金额" 格式
+                const fullMatch = line.match(/^(\d+)\s+(.+?)\s+(\d+(?:\.\d{1,2})?)$/);
+                if (fullMatch) {
+                    type = fullMatch[2].trim();
+                    amount = parseFloat(fullMatch[3]);
+                } else {
+                    // 尝试匹配 "优惠类型 金额" 格式
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length < 2) {
+                        invalidDiscounts.push({ line, error: '格式错误，需包含优惠类型和金额' });
+                        return;
+                    }
+                    
+                    type = parts.slice(0, -1).join(' ').trim();
+                    amount = parseFloat(parts[parts.length - 1]);
+                }
+                
+                if (isNaN(amount)) {
+                    invalidDiscounts.push({ line, error: '金额格式不正确' });
+                    return;
+                }
+
+                // 确保金额为正数
+                amount = Math.abs(amount);
+                
+                // 根据优惠类型决定放入哪个列表
+                if (excludedDiscountTypes.includes(type)) {
+                    excludedDiscounts.push({ type, amount });
+                } else {
+                    validDiscounts.push({ type, amount });
+                }
+            });
+            
+            // 显示解析结果
+            const previewContainer = document.getElementById('discounts-preview');
+            const validContainer = document.getElementById('valid-discounts');
+            const invalidContainer = document.getElementById('invalid-discounts');
+            const excludedContainer = document.getElementById('excluded-discounts');
+            
+            // 清空之前的结果
+            validContainer.innerHTML = '';
+            invalidContainer.innerHTML = '';
+            excludedContainer.innerHTML = '';
+            
+            // 显示有效优惠（参与计算的优惠）
+            if (validDiscounts.length > 0) {
+                validDiscounts.forEach(discount => {
+                    const item = document.createElement('div');
+                    item.className = "flex justify-between items-center p-2 bg-success/10 rounded text-success";
+                    item.innerHTML = `
+                        <span>${discount.type}</span>
+                        <span>¥${discount.amount.toFixed(2)}</span>
+                    `;
+                    validContainer.appendChild(item);
+                });
+            } else {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = "p-2 bg-gray-100 rounded text-gray-500 italic";
+                emptyItem.textContent = "无参与计算的优惠";
+                validContainer.appendChild(emptyItem);
+            }
+            
+            // 显示保留的优惠（不参与计算的优惠）
+            if (excludedDiscounts.length > 0) {
+                excludedDiscounts.forEach(discount => {
+                    const item = document.createElement('div');
+                    item.className = "flex justify-between items-center p-2 bg-primary/10 rounded text-primary";
+                    item.innerHTML = `
+                        <span>${discount.type}</span>
+                        <span>¥${discount.amount.toFixed(2)}</span>
+                    `;
+                    excludedContainer.appendChild(item);
+                });
+            } else {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = "p-2 bg-gray-100 rounded text-gray-500 italic";
+                emptyItem.textContent = "无保留的优惠";
+                excludedContainer.appendChild(emptyItem);
+            }
+            
+            // 显示无效优惠
+            if (invalidDiscounts.length > 0) {
+                invalidDiscounts.forEach(item => {
+                    const discountItem = document.createElement('div');
+                    discountItem.className = "flex justify-between items-center p-2 bg-danger/10 rounded text-danger";
+                    discountItem.innerHTML = `
+                        <span>${item.line}</span>
+                        <span class="text-xs">${item.error}</span>
+                    `;
+                    invalidContainer.appendChild(discountItem);
+                });
+            }
+            
+            // 显示解析结果
+            previewContainer.classList.remove('hidden');
+            
+            return { validDiscounts, excludedDiscounts };
+        }
+        
+        // 计算实付款
+        function calculateFinalPrice() {
+            // 获取表单数据
+            const productPrice = parseFloat(document.getElementById('product-price').value) || 0;
+            const orderNumber = document.getElementById('order-number').value.trim();
+            const { validDiscounts, excludedDiscounts } = parseDiscountsText(document.getElementById('discounts-text').value);
+            
+            // 计算总金额
+            const excludedDiscountTotal = excludedDiscounts.reduce((total, discount) => total + discount.amount, 0);
+            const appliedDiscountTotal = validDiscounts.reduce((total, discount) => total + discount.amount, 0);
+            const finalPrice = productPrice - appliedDiscountTotal;
+            
+            // 验证必填字段
+            if (!productPrice) {
+                alert('请填写商品金额');
+                return;
+            }
+            
+            // 显示结果
+            document.getElementById('order-number-display').textContent = orderNumber || '无';
+            document.getElementById('product-price-display').textContent = `¥${productPrice.toFixed(2)}`;
+            document.getElementById('excluded-discount-total-display').textContent = `¥${excludedDiscountTotal.toFixed(2)}`;
+            document.getElementById('applied-discount-total-display').textContent = `¥${appliedDiscountTotal.toFixed(2)}`;
+            document.getElementById('final-price-display').textContent = `¥${finalPrice.toFixed(2)}`;
+            
+            // 显示结果区域
+            document.getElementById('result-section').classList.remove('hidden');
+            
+            // 显示优惠明细
+            const excludedDiscountDetails = document.getElementById('excluded-discount-details');
+            const appliedDiscountDetails = document.getElementById('applied-discount-details');
+            excludedDiscountDetails.innerHTML = '';
+            appliedDiscountDetails.innerHTML = '';
+            
+            excludedDiscounts.forEach(discount => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center p-2 bg-primary/10 rounded text-primary";
+                item.innerHTML = `
+                    <span>${discount.type}</span>
+                    <span>¥${discount.amount.toFixed(2)}</span>
+                `;
+                excludedDiscountDetails.appendChild(item);
+            });
+            
+            validDiscounts.forEach(discount => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center p-2 bg-secondary/10 rounded text-secondary";
+                item.innerHTML = `
+                    <span>${discount.type}</span>
+                    <span>¥${discount.amount.toFixed(2)}</span>
+                `;
+                appliedDiscountDetails.appendChild(item);
+            });
+            
+            // 如果没有保留的优惠
+            if (excludedDiscounts.length === 0) {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = "p-2 bg-gray-100 rounded text-gray-500 italic text-center";
+                emptyItem.textContent = "没有保留的优惠";
+                excludedDiscountDetails.appendChild(emptyItem);
+            }
+            
+            // 如果没有扣除的优惠
+            if (validDiscounts.length === 0) {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = "p-2 bg-gray-100 rounded text-gray-500 italic text-center";
+                emptyItem.textContent = "没有扣除的优惠";
+                appliedDiscountDetails.appendChild(emptyItem);
+            }
+        }
+    </script>
+</body>
+</html>

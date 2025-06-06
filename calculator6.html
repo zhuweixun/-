@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>延保复购补贴计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- 配置Tailwind自定义主题 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .bg-gradient-custom {
+                background-image: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .grid-cols-results {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <!-- 新增返回按钮 -->
+    <a href="home.html" class="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full shadow-lg transition-all flex items-center justify-center z-20">
+        <i class="fa fa-arrow-left mr-2"></i> 返回首页
+    </a>
+
+    <!-- 顶部导航 -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-10 transition-all duration-300" id="mainNav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gradient-custom flex items-center justify-center text-white">
+                            <i class="fa fa-calculator"></i>
+                        </div>
+                        <span class="ml-2 font-semibold text-xl text-dark">延保复购补贴计算器</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fa fa-moon-o"></i>
+                    </button>
+                    <button id="helpBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fa fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- 欢迎信息 -->
+        <div class="mb-12 text-center">
+            <h1 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-dark mb-2">延保复购补贴计算器</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">输入商品SKU和订单完成时间，快速计算延保复购补贴相关时间节点</p>
+        </div>
+        
+        <!-- 计算器卡片 -->
+        <div class="bg-white rounded-2xl overflow-hidden card-shadow mb-12">
+            <div class="bg-gradient-custom p-6 text-white">
+                <h2 class="text-2xl font-bold mb-2">补贴计算</h2>
+                <p class="text-white/80">根据商品SKU和订单完成时间计算延保复购补贴时间</p>
+            </div>
+            
+            <div class="p-6">
+                <!-- SKU输入 -->
+                <div class="mb-6">
+                    <label for="sku" class="block text-sm font-medium text-gray-700 mb-1">商品SKU（手动输入sku编码）</label>
+                    <div class="relative">
+                        <input type="text" id="sku" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="请输入商品SKU">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <button id="clearSku" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="fa fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p id="skuInfo" class="mt-2 text-sm text-gray-500 hidden"></p>
+                </div>
+                
+                <!-- 订单完成时间输入 -->
+                <div class="mb-6">
+                    <label for="orderDate" class="block text-sm font-medium text-gray-700 mb-1">订单完成时间（点击右侧日历选择无需手动输入）</label>
+                    <input type="date" id="orderDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                </div>
+                
+                <!-- 计算按钮 -->
+                <div class="mb-6">
+                    <button id="calculateBtn" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all flex items-center justify-center">
+                        <i class="fa fa-calculator mr-2"></i>
+                        计算补贴时间
+                    </button>
+                </div>
+                
+                <!-- 结果展示 -->
+                <div id="resultSection" class="hidden">
+                    <div class="border-t border-gray-200 pt-6 mb-6">
+                        <h3 class="text-xl font-bold text-dark mb-4">服务时间节点</h3>
+                        <div class="space-y-3 grid grid-cols-results gap-3" id="timeResults">
+                            <!-- 结果将在这里动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 警示信息 -->
+                    <div id="warningSection" class="bg-warning/10 border-l-4 border-warning p-4 rounded-r-lg mb-6 hidden">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-exclamation-triangle text-warning"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-gray-800">请注意</h3>
+                                <div class="mt-1 text-sm text-gray-700" id="warningMessage">
+                                    <!-- 警示信息将在这里动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SKU类型列表 -->
+        <div class="mb-12">
+            <h2 class="text-xl font-bold text-dark mb-6">支持的SKU类型</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="skuTypes">
+                <!-- SKU类型将在这里动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 使用帮助 -->
+        <div class="bg-white rounded-2xl overflow-hidden card-shadow">
+            <div class="bg-gray-800 p-6 text-white">
+                <h2 class="text-2xl font-bold mb-2">使用帮助</h2>
+                <p class="text-white/80">了解如何使用延保复购补贴计算器</p>
+            </div>
+            
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark mb-2">如何使用计算器？</h3>
+                        <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                            <li>在"商品SKU"输入框中输入对应的SKU编号</li>
+                            <li>选择订单完成日期</li>
+                            <li>点击"计算补贴时间"按钮</li>
+                            <li>查看计算结果和相关警示信息</li>
+                        </ol>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark mb-2">常见问题</h3>
+                        <div class="space-y-3">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-medium text-dark">1. 不同SKU的计算规则有什么不同？</h4>
+                                <p class="text-gray-700 mt-1">不同SKU的服务生效规则和时间节点不同，具体规则请参考上方SKU类型列表。</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-medium text-dark">2. 计算结果的时间格式是什么？</h4>
+                                <p class="text-gray-700 mt-1">所有时间节点均以"YYYY/MM/DD"格式显示，部分包含具体时间点。</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-medium text-dark">3. 警示信息有什么作用？</h4>
+                                <p class="text-gray-700 mt-1">警示信息包含重要的补贴条件和注意事项，请仔细阅读。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gradient-custom flex items-center justify-center text-white">
+                            <i class="fa fa-calculator"></i>
+                        </div>
+                        <span class="ml-2 font-semibold text-xl">延保复购补贴计算器</span>
+                    </div>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    © 版权所有·商家险客服部朱唯迅
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 帮助模态框 -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-dark">使用指南</h3>
+                    <button id="closeHelpModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-dark">1. 输入SKU</h4>
+                        <p class="text-gray-700">在SKU输入框中输入对应的商品SKU编号，系统会自动识别产品类型。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-dark">2. 选择订单完成时间</h4>
+                        <p class="text-gray-700">使用日期选择器选择原始订单的完成时间。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-dark">3. 计算结果</h4>
+                        <p class="text-gray-700">点击"计算补贴时间"按钮，系统会根据SKU类型和订单完成时间计算各项服务时间节点。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-dark">4. 查看结果</h4>
+                        <p class="text-gray-700">计算完成后，系统会显示详细的时间节点和相关警示信息。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 产品SKU数据
+        const skuData = [
+            {
+                sku: "100175363357",
+                name: "坚果炒货补贴20元",
+               生效规则: "第2日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+1天",
+                    复购订单最早可发起时间: "订单完成日+9天",
+                    复购订单最迟购买时间: "订单完成日+30天",
+                    复购订单最晚可申请时间: "订单完成日+40天",
+                    保藏系统展示服务截止时间: "订单完成日+40天 23:59",
+                    对客展示服务失效时间: "订单完成日+40天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100227376896",
+                name: "蜜饯果干补贴20元",
+                生效规则: "第8日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+7天",
+                    复购订单最早可发起时间: "订单完成日+15天",
+                    复购订单最迟购买时间: "订单完成日+53天",
+                    复购订单最晚可申请时间: "订单完成日+60天",
+                    保藏系统展示服务截止时间: "订单完成日+66天 23:59",
+                    对客展示服务失效时间: "订单完成日+66天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100227631286",
+                name: "个人护理补贴20元",
+                生效规则: "第8日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+7天",
+                    复购订单最早可发起时间: "订单完成日+15天",
+                    复购订单最迟购买时间: "订单完成日+53天",
+                    复购订单最晚可申请时间: "订单完成日+60天",
+                    保藏系统展示服务截止时间: "订单完成日+66天 23:59",
+                    对客展示服务失效时间: "订单完成日+66天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100165868391",
+                name: "坚果炒货补贴20元",
+                生效规则: "第8日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+7天",
+                    复购订单最早可发起时间: "订单完成日+15天",
+                    复购订单最迟购买时间: "订单完成日+53天",
+                    复购订单最晚可申请时间: "订单完成日+60天",
+                    保藏系统展示服务截止时间: "订单完成日+66天 23:59",
+                    对客展示服务失效时间: "订单完成日+66天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100165868377",
+                name: "蜜饯果干补贴20元",
+                生效规则: "第8日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+7天",
+                    复购订单最早可发起时间: "订单完成日+15天",
+                    复购订单最迟购买时间: "订单完成日+53天",
+                    复购订单最晚可申请时间: "订单完成日+60天",
+                    保藏系统展示服务截止时间: "订单完成日+66天 23:59",
+                    对客展示服务失效时间: "订单完成日+66天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100121047063",
+                name: "果蔬饮料补贴30元",
+                生效规则: "第61日生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+60天",
+                    复购订单最早可发起时间: "订单完成日+75天",
+                    复购订单最迟购买时间: "订单完成日+75天",
+                    复购订单最晚可申请时间: "订单完成日+89天",
+                    保藏系统展示服务截止时间: "订单完成日+89天 23:59",
+                    对客展示服务失效时间: "订单完成日+89天 23:59"
+                },
+                警示信息: "复购订单要求（购买原sku）订单实付金额≥100"
+            },
+            {
+                sku: "100174175025",
+                name: "文胸，内衣补贴20元",
+                生效规则: "第8日生效（包含当天）",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+7天",
+                    复购订单最早可发起时间: "订单完成日+15天",
+                    复购订单最迟购买时间: "订单完成日+59天",
+                    复购订单最晚可申请时间: "订单完成日+67天",
+                    保藏系统展示服务截止时间: "订单完成日+67天 23:59",
+                    对客展示服务失效时间: "订单完成日+74天 23:59"
+                },
+                警示信息: "因复购订单需要过7天无理由，故系统对比商详图多给客户7天服务有效期"
+            },
+            {
+                sku: "100068081500",
+                name: "手机复购补贴200元",
+                生效规则: "第7个月生效",
+                计算规则: {
+                    服务生效时间复购订单最早下单时间: "订单完成日+6个月+1天",
+                    复购订单最早可发起时间: "订单完成日+6个月+16天",
+                    复购订单最迟购买时间: "订单完成日+11个月+16天",
+                    复购订单最晚可申请时间: "订单完成日+11个月+16天",
+                    保藏系统展示服务截止时间: "订单完成日+12个月 23:59",
+                    对客展示服务失效时间: "订单完成日+12个月 23:59"
+                },
+                警示信息: "复购订单要求（购买原sku）订单实付金额≥原商品实付金额"
+            }
+        ];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期为今天
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('orderDate').value = formattedDate;
+            
+            // 渲染SKU类型列表
+            renderSKUTypes();
+            
+            // 监听SKU输入变化
+            document.getElementById('sku').addEventListener('input', function() {
+                validateSKU(this.value);
+            });
+            
+            // 清空SKU按钮
+            document.getElementById('clearSku').addEventListener('click', function() {
+                document.getElementById('sku').value = '';
+                document.getElementById('skuInfo').classList.add('hidden');
+            });
+            
+            // 计算按钮
+            document.getElementById('calculateBtn').addEventListener('click', calculate);
+            
+            // 主题切换
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // 帮助按钮
+            document.getElementById('helpBtn').addEventListener('click', function() {
+                document.getElementById('helpModal').classList.remove('hidden');
+            });
+            
+            // 关闭帮助模态框
+            document.getElementById('closeHelpModal').addEventListener('click', function() {
+                document.getElementById('helpModal').classList.add('hidden');
+            });
+            
+            // 点击模态框外部关闭
+            document.getElementById('helpModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            
+            // 滚动时导航栏效果
+            window.addEventListener('scroll', function() {
+                const nav = document.getElementById('mainNav');
+                if (window.scrollY > 10) {
+                    nav.classList.add('shadow-lg');
+                    nav.classList.remove('shadow-md');
+                } else {
+                    nav.classList.remove('shadow-lg');
+                    nav.classList.add('shadow-md');
+                }
+            });
+        });
+        
+        // 验证SKU
+        function validateSKU(sku) {
+            const skuInfo = document.getElementById('skuInfo');
+            const product = skuData.find(p => p.sku === sku);
+            
+            if (product) {
+                skuInfo.textContent = `已识别：${product.name}`;
+                skuInfo.classList.remove('hidden', 'text-danger');
+                skuInfo.classList.add('text-secondary');
+                return product;
+            } else if (sku.trim() !== '') {
+                skuInfo.textContent = '未识别的SKU，请检查输入';
+                skuInfo.classList.remove('hidden', 'text-secondary');
+                skuInfo.classList.add('text-danger');
+                return null;
+            } else {
+                skuInfo.classList.add('hidden');
+                return null;
+            }
+        }
+        
+        // 计算补贴时间
+        function calculate() {
+            const skuInput = document.getElementById('sku').value;
+            const orderDateInput = document.getElementById('orderDate').value;
+            
+            if (!skuInput || !orderDateInput) {
+                alert('请输入SKU并选择订单完成时间');
+                return;
+            }
+            
+            const product = validateSKU(skuInput);
+            if (!product) {
+                alert('请输入有效的SKU');
+                return;
+            }
+            
+            // 解析订单日期
+            const orderDate = new Date(orderDateInput);
+            
+            // 计算各项时间
+            const results = calculateTimes(product, orderDate);
+            
+            // 显示结果
+            displayResults(product, results, orderDate);
+            
+            // 滚动到结果部分
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 计算各项时间
+        function calculateTimes(product, orderDate) {
+            const results = {};
+            
+            // 根据不同的SKU类型应用不同的计算规则
+            for (const [key, rule] of Object.entries(product.计算规则)) {
+                let resultDate;
+                
+                if (rule.includes('+')) {
+                    // 处理 "+X天" 的规则
+                    const parts = rule.split('+');
+                    const baseDate = new Date(orderDate);
+                    const days = parseInt(parts[1]);
+                    
+                    if (rule.includes('个月')) {
+                        // 处理月计算
+                        const months = parseInt(parts[1].split('个月')[0]);
+                        baseDate.setMonth(baseDate.getMonth() + months);
+                        
+                        // 处理可能的 "+X天" 部分
+                        if (parts[1].includes('天')) {
+                            const remainingDays = parseInt(parts[1].split('个月')[1].replace('天', ''));
+                            baseDate.setDate(baseDate.getDate() + remainingDays);
+                        }
+                    } else {
+                        // 处理天计算
+                        baseDate.setDate(baseDate.getDate() + days);
+                    }
+                    
+                    resultDate = baseDate;
+                } else {
+                    // 直接使用订单日期
+                    resultDate = new Date(orderDate);
+                }
+                
+                // 格式化日期
+                if (rule.includes('23:59')) {
+                    results[key] = formatDate(resultDate) + ' 23:59';
+                } else {
+                    results[key] = formatDate(resultDate);
+                }
+            }
+            
+            return results;
+        }
+        
+        // 格式化日期为 YYYY/MM/DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}/${month}/${day}`;
+        }
+        
+        // 显示计算结果
+        function displayResults(product, results, orderDate) {
+            const resultSection = document.getElementById('resultSection');
+            const timeResults = document.getElementById('timeResults');
+            const warningSection = document.getElementById('warningSection');
+            const warningMessage = document.getElementById('warningMessage');
+            
+            // 清空结果区域
+            timeResults.innerHTML = '';
+            
+            // 添加服务生效规则
+            const ruleItem = document.createElement('div');
+            ruleItem.className = 'flex items-start p-3 bg-gray-50 rounded-lg col-span-full';
+            ruleItem.innerHTML = `
+                <div class="flex-shrink-0 text-primary">
+                    <i class="fa fa-calendar-check-o"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-medium text-gray-800">服务生效规则</h4>
+                    <p class="mt-1 text-sm text-gray-700">${product.生效规则} (订单完成日: ${formatDate(orderDate)})</p>
+                </div>
+            `;
+            timeResults.appendChild(ruleItem);
+            
+            // 添加计算结果
+            for (const [key, value] of Object.entries(results)) {
+                const item = document.createElement('div');
+                item.className = 'flex items-start p-3 bg-white border border-gray-100 rounded-lg';
+                item.innerHTML = `
+                    <div class="flex-shrink-0 text-primary/70">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-medium text-gray-800">${key}</h4>
+                        <p class="mt-1 text-sm text-gray-700">${value}</p>
+                    </div>
+                `;
+                timeResults.appendChild(item);
+            }
+            
+            // 显示警示信息
+            warningMessage.textContent = product.警示信息;
+            warningSection.classList.remove('hidden');
+            
+            // 显示结果部分
+            resultSection.classList.remove('hidden');
+        }
+        
+        // 渲染SKU类型列表
+        function renderSKUTypes() {
+            const skuTypes = document.getElementById('skuTypes');
+            
+            skuData.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl p-4 border border-gray-100 card-shadow card-hover';
+                card.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 p-2 bg-primary/10 rounded-lg">
+                            <i class="fa fa-barcode text-primary"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-gray-800">${product.sku}</h3>
+                            <p class="mt-1 text-sm text-gray-600">${product.name}</p>
+                        </div>
+                    </div>
+                `;
+                
+                skuTypes.appendChild(card);
+            });
+        }
+        
+        // 切换主题
+        function toggleTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('i');
+            
+            if (icon.classList.contains('fa-moon-o')) {
+                icon.classList.remove('fa-moon-o');
+                icon.classList.add('fa-sun-o');
+                document.body.classList.add('dark-mode');
+            } else {
+                icon.classList.remove('fa-sun-o');
+                icon.classList.add('fa-moon-o');
+                document.body.classList.remove('dark-mode');
+            }
+        }
+    </script>
+</body>
+</html>
+    
