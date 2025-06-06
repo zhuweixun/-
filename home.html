@@ -61,6 +61,20 @@
                 height: 6rem; /* 设置容器高度 */
                 width: 6rem;  /* 设置容器宽度 */
             }
+            .title-container {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+            .section-title {
+                text-align: center;
+                padding: 0.5rem 1.5rem;
+                border-radius: 0.75rem;
+                font-weight: 700;
+                font-size: 1.25rem;
+                display: inline-block;
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
@@ -95,90 +109,136 @@
             <p class="text-gray-600 max-w-2xl mx-auto">选择您需要使用的工具，高效处理您的问题</p>
         </div>
         
-        <!-- 工具卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <!-- 比价工具卡片 -->
-            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
-                <div class="h-40 bg-primary/10 flex items-center justify-center">
-                    <div class="icon-container">
-                        <i class="fa fa-balance-scale text-icon-6xl text-primary"></i>
+        <!-- 工具卡片区域 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+            <!-- 商家险工具列 -->
+            <div>
+                <div class="title-container">
+                    <h2 class="section-title bg-primary/10 text-primary">商家险工具</h2>
+                </div>
+                <!-- 比价工具卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-primary/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-balance-scale text-icon-6xl text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">比价工具</h3>
+                        <p class="text-gray-600 mb-4">对比输入的订单信息，高效完成比价</p>
+                        <a href="calculator.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
                     </div>
                 </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-dark mb-2">比价工具</h3>
-                    <p class="text-gray-600 mb-4">对比输入的订单信息，高效完成比价</p>
-                    <a href="calculator.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary/90 transition-all">
-                        <i class="fa fa-arrow-right mr-2"></i>
-                        打开工具
-                    </a>
-                </div>
-            </div>
-            
-            <!-- 商家ID批量处理工具卡片 -->
-            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
-                <div class="h-40 bg-secondary/10 flex items-center justify-center">
-                    <div class="icon-container">
-                        <i class="fa fa-tasks text-icon-6xl text-secondary"></i>
+                
+                <!-- 商家ID批量处理工具卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-secondary/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-tasks text-icon-6xl text-secondary"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">商家批量解约处理工具</h3>
+                        <p class="text-gray-600 mb-4">批量完成商家险解约操作</p>
+                        <a href="calculator2.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-secondary hover:bg-secondary/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
                     </div>
                 </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-dark mb-2">商家批量解约处理工具</h3>
-                    <p class="text-gray-600 mb-4">批量完成商家险解约操作</p>
-                    <a href="calculator2.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-secondary hover:bg-secondary/90 transition-all">
-                        <i class="fa fa-arrow-right mr-2"></i>
-                        打开工具
-                    </a>
+
+                <!-- 商家批量开通工具卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-accent/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-plus-circle text-icon-6xl text-accent"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">商家批量开通工具</h3>
+                        <p class="text-gray-600 mb-4">批量完成商家开通操作</p>
+                        <a href="calculator3.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 商家险批量拉黑工具卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-danger/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-ban text-icon-6xl text-danger"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">商家险批量拉黑工具</h3>
+                        <p class="text-gray-600 mb-4">批量完成商家险拉黑操作</p>
+                        <a href="calculator4.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-danger hover:bg-danger/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 运费险标签修改工具卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-accent/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-tags text-icon-6xl text-accent"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">运费险标签修改</h3>
+                        <p class="text-gray-600 mb-4">修改sku的大中小打标</p>
+                        <a href="calculator5.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- 商家批量开通工具卡片 -->
-            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
-                <div class="h-40 bg-accent/10 flex items-center justify-center">
-                    <div class="icon-container">
-                        <i class="fa fa-plus-circle text-icon-6xl text-accent"></i>
+            <!-- 延保工具列 -->
+            <div>
+                <div class="title-container">
+                    <h2 class="section-title bg-accent/10 text-accent">延保工具</h2>
+                </div>
+                <!-- 延保补购日期计算器卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-accent/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-calendar text-icon-6xl text-accent"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">延保补购日期计算器</h3>
+                        <p class="text-gray-600 mb-4">计算延保订单后续补购的各个时间节点</p>
+                        <a href="calculator6.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
                     </div>
                 </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-dark mb-2">商家批量开通工具</h3>
-                    <p class="text-gray-600 mb-4">批量完成商家开通操作</p>
-                    <a href="calculator3.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
-                        <i class="fa fa-arrow-right mr-2"></i>
-                        打开工具
-                    </a>
-                </div>
-            </div>
 
-            <!-- 商家险批量拉黑工具卡片 -->
-            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
-                <div class="h-40 bg-danger/10 flex items-center justify-center">
-                    <div class="icon-container">
-                        <i class="fa fa-ban text-icon-6xl text-danger"></i>
+                <!-- 延保补购订单实付款计算器卡片 -->
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
+                    <div class="h-40 bg-accent/10 flex items-center justify-center">
+                        <div class="icon-container">
+                            <i class="fa fa-money text-icon-6xl text-accent"></i>
+                        </div>
                     </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-dark mb-2">商家险批量拉黑工具</h3>
-                    <p class="text-gray-600 mb-4">批量完成商家险拉黑操作</p>
-                    <a href="calculator4.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-danger hover:bg-danger/90 transition-all">
-                        <i class="fa fa-arrow-right mr-2"></i>
-                        打开工具
-                    </a>
-                </div>
-            </div>
-
-            <!-- 运费险标签修改工具卡片 -->
-            <div class="bg-white rounded-2xl overflow-hidden card-shadow card-hover">
-                <div class="h-40 bg-accent/10 flex items-center justify-center">
-                    <div class="icon-container">
-                        <i class="fa fa-tags text-icon-6xl text-accent"></i>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2">延保补购订单实付款计算器</h3>
+                        <p class="text-gray-600 mb-4">计算延保补购订单的实付价格</p>
+                        <a href="calculator7.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            打开工具
+                        </a>
                     </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-dark mb-2">运费险标签修改</h3>
-                    <p class="text-gray-600 mb-4">修改sku的大中小打标</p>
-                    <a href="calculator5.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-accent hover:bg-accent/90 transition-all">
-                        <i class="fa fa-arrow-right mr-2"></i>
-                        打开工具
-                    </a>
                 </div>
             </div>
         </div>
