@@ -187,11 +187,20 @@
                             <span class="text-gray-600">扣除优惠金额:</span>
                             <span id="applied-discount-total-display" class="font-medium"></span>
                         </div>
+                        <!-- 新增显示全球购税费(包税)金额 -->
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">全球购税费(包税)金额:</span>
+                            <span id="global-tax-amount-display" class="font-medium"></span>
+                        </div>
                         <div class="border-t border-gray-200 my-3 pt-3">
                             <div class="flex justify-between">
                                 <span class="font-semibold text-lg">订单实付款:</span>
                                 <span id="final-price-display" class="font-bold text-2xl"></span>
                             </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">含全球购税费(包税)实付款:</span>
+                            <span id="final-price-with-tax-display" class="font-medium"></span>
                         </div>
                     </div>
                 </div>
@@ -238,7 +247,7 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">延保复购补贴计算工具</h3>
                     <p class="text-gray-400 text-sm">
-                        创建本工具旨在帮助大家快速准确地计算订单实付款，不做他用。
+                        创建本工具旨在帮助大家快速准确地计算订单实付款，不做用作。
                     </p>
                 </div>
                 <div>
@@ -288,7 +297,7 @@
         // 不参与计算的优惠类型列表
         const excludedDiscountTypes = [
             "有效期京豆", "京豆", "3C以旧换新旧机抵扣金额", "钢镚", 
-            "超级红包", "京东购物卡本金", "红包", "E卡", "礼品卡", "领货码", "plus免运权益"
+            "超级红包", "京东购物卡本金", "红包", "E卡", "礼品卡", "领货码", "plus免运权益", "全球购税费(包税)"
         ];
         
         // DOM 加载完成后执行
@@ -478,8 +487,19 @@
             // 计算总金额
             const excludedDiscountTotal = excludedDiscounts.reduce((total, discount) => total + discount.amount, 0);
             const appliedDiscountTotal = validDiscounts.reduce((total, discount) => total + discount.amount, 0);
+
+            // 查找全球购税费(包税)的金额
+            let globalTaxAmount = 0;
+            excludedDiscounts.forEach(discount => {
+                if (discount.type === '全球购税费(包税)') {
+                    globalTaxAmount += discount.amount;
+                }
+            });
+
+            // 将全球购税费(包税)的金额加到最终结果中
             const finalPrice = productPrice - appliedDiscountTotal;
-            
+            const finalPriceWithTax = finalPrice + globalTaxAmount;
+
             // 验证必填字段
             if (!productPrice) {
                 alert('请填写商品金额');
@@ -492,6 +512,12 @@
             document.getElementById('excluded-discount-total-display').textContent = `¥${excludedDiscountTotal.toFixed(2)}`;
             document.getElementById('applied-discount-total-display').textContent = `¥${appliedDiscountTotal.toFixed(2)}`;
             document.getElementById('final-price-display').textContent = `¥${finalPrice.toFixed(2)}`;
+            
+            // 显示含全球购税费(包税)的实付款
+            document.getElementById('final-price-with-tax-display').textContent = `¥${finalPriceWithTax.toFixed(2)}`;
+            
+            // 显示全球购税费(包税)的金额
+            document.getElementById('global-tax-amount-display').textContent = `¥${globalTaxAmount.toFixed(2)}`;
             
             // 显示结果区域
             document.getElementById('result-section').classList.remove('hidden');
