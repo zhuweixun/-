@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,24 +35,31 @@
       .content-auto {
         content-visibility: auto;
       }
+
       .animate-fade-in {
         animation: fadeIn 0.3s ease-in-out;
       }
+
       .animate-slide-up {
         animation: slideUp 0.3s ease-out;
       }
+
       .animate-pulse-slow {
         animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
+
       .shadow-card {
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
       }
+
       .gradient-bg {
         background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
       }
+
       .input-focus {
         transition: all 0.3s ease;
       }
+
       .input-focus:focus {
         transform: translateY(-2px);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -59,21 +67,40 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
-    
+
     @keyframes slideUp {
-      from { transform: translateY(10px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
-    
+
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
     }
   </style>
 </head>
+
 <body class="bg-gray-50 font-inter min-h-screen flex flex-col">
   <!-- 顶部导航栏 -->
   <header class="gradient-bg shadow-md sticky top-0 z-10 text-white">
@@ -117,24 +144,24 @@
       <div class="bg-white rounded-xl shadow-card p-6 mb-8 animate-slide-up">
         <!-- 新增批量解约操作步骤框 -->
         <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-8 animate-slide-up">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <i class="fa fa-info-circle text-yellow-500"></i>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-dark">批量解约操作步骤</h3>
-                    <div class="mt-2 text-sm text-gray-dark">
-                        <p>1. 点击导出 Excel 文件</p>
-                        <p>2. 选择工作台：京东保险经纪（天津）有限公司</p>
-                        <p>3. 点击商家险工作台</p>
-                        <p>4. 点击签约管理</p>
-                        <p>5. 点击签约解约</p>
-                        <p>6. 点击新增批量停约任务位置的导入停约名单</p>
-                        <p>7. 点击商家险</p>
-                        <p>8. 点击确定后点击上传，上传下载的这个文件即可</p>
-                    </div>
-                </div>
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fa fa-info-circle text-yellow-500"></i>
             </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-dark">批量解约操作步骤</h3>
+              <div class="mt-2 text-sm text-gray-dark">
+                <p>1. 点击导出 Excel 文件</p>
+                <p>2. 选择工作台：京东保险经纪（天津）有限公司</p>
+                <p>3. 点击商家险工作台</p>
+                <p>4. 点击签约管理</p>
+                <p>5. 点击签约解约</p>
+                <p>6. 点击新增批量停约任务位置的导入停约名单</p>
+                <p>7. 点击商家险</p>
+                <p>8. 点击确定后点击上传，上传下载的这个文件即可</p>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- 保险险种部分 -->
         <div class="mb-8">
@@ -142,18 +169,24 @@
             <label class="block text-sm font-medium text-dark">保险险种列表</label>
             <div class="flex items-center space-x-2">
               <span id="insurance-count" class="text-sm text-gray-dark">0 个保险险种</span>
-              <button 
-                id="add-insurance-btn" 
+              <button
+                id="add-insurance-btn"
                 class="bg-secondary hover:bg-secondary/90 text-white px-3 py-1 rounded-lg transition-colors text-sm flex items-center"
               >
                 <i class="fa fa-plus mr-1"></i> 添加
+              </button>
+              <button
+                id="add-all-insurance-btn"
+                class="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded-lg transition-colors text-sm flex items-center"
+              >
+                <i class="fa fa-list mr-1"></i> 全量添加
               </button>
             </div>
           </div>
           <div id="insurance-container" class="space-y-3">
             <div class="insurance-item flex items-center">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 class="insurance-type flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 input-focus"
                 placeholder="请输入保险险种ID..."
               >
@@ -163,38 +196,38 @@
             </div>
           </div>
         </div>
-        
+
         <!-- 商家ID部分 -->
         <div class="mb-6">
           <div class="flex justify-between items-center mb-2">
             <label for="shop-ids" class="block text-sm font-medium text-dark">商家ID列表（每行一个ID）</label>
             <span id="id-count" class="text-sm text-gray-dark">0 个商家ID</span>
           </div>
-          <textarea 
-            id="shop-ids" 
+          <textarea
+            id="shop-ids"
             class="w-full h-32 p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none input-focus"
             placeholder="请粘贴商家ID列表，每行一个ID..."></textarea>
-          <button 
-            id="extract-shop-ids-btn" 
+          <button
+            id="extract-shop-ids-btn"
             class="bg-secondary hover:bg-secondary/90 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mt-2"
           >
             <i class="fa fa-search mr-2"></i> 提取商家ID
           </button>
         </div>
-        
+
         <div class="flex justify-between items-center">
           <div class="text-sm text-gray-dark">
             <span id="total-count" class="text-primary font-medium">0</span> 个组合将被生成
           </div>
           <div class="flex space-x-3">
-            <button 
-              id="clear-btn" 
+            <button
+              id="clear-btn"
               class="bg-success hover:bg-success/90 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               <i class="fa fa-refresh mr-2"></i> 清除
             </button>
-            <button 
-              id="process-btn" 
+            <button
+              id="process-btn"
               class="gradient-bg hover:opacity-90 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <i class="fa fa-cogs mr-2"></i> 生成数据
@@ -216,7 +249,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -233,13 +266,13 @@
             </tbody>
           </table>
         </div>
-        
+
         <div id="empty-result" class="py-12 text-center hidden">
           <i class="fa fa-search text-gray-300 text-5xl mb-4"></i>
           <p class="text-gray-dark">未生成任何数据</p>
           <p class="text-sm text-gray-medium mt-2">请输入商家ID和保险险种</p>
         </div>
-        
+
         <div id="result-summary" class="mt-4 text-sm text-gray-dark flex justify-between items-center">
           <span>共生成 <span id="result-count">0</span> 条记录</span>
           <span id="process-time" class="text-gray-medium"></span>
@@ -316,6 +349,114 @@
     const resultSummary = document.getElementById('result-summary');
     const clearBtn = document.getElementById('clear-btn');
     const extractShopIdsBtn = document.getElementById('extract-shop-ids-btn');
+    const addAllInsuranceBtn = document.getElementById('add-all-insurance-btn');
+
+    // 新增的全量保险险种ID
+    const allInsuranceIds = `5998
+5999
+5013
+5033
+6075
+7024
+6043
+6095
+8027
+6086
+6112
+6096
+6107
+5012
+7025
+8028
+6074
+6044
+7029
+6158
+6104
+6068
+6026
+6116
+7042
+6088
+7039
+6056
+6117
+8026
+6009
+6007
+6066
+6028
+6072
+6089
+5035
+6094
+6130
+6109
+6012
+5003
+6076
+6165
+5015
+6150
+5031
+6156
+6045
+5006
+6069
+6135
+6131
+5021
+5004
+6126
+5019
+6041
+6027
+6102
+5011
+5005
+6048
+8001
+6010
+7044
+6106
+7007
+6110
+7009
+8011
+5036`;
+
+    // 全量添加按钮事件处理
+    addAllInsuranceBtn.addEventListener('click', () => {
+      const insuranceIds = allInsuranceIds.trim().split('\n');
+      const firstInsurance = document.querySelector('.insurance-item');
+      insuranceContainer.innerHTML = '';
+
+      insuranceIds.forEach((id, index) => {
+        const newItem = document.createElement('div');
+        newItem.className = 'insurance-item flex items-center animate-slide-up';
+        newItem.innerHTML = `
+          <input 
+            type="text" 
+            class="insurance-type flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 input-focus"
+            value="${id}"
+          >
+          <button class="remove-insurance ml-2 text-gray-dark hover:text-danger transition-colors">
+            <i class="fa fa-times-circle"></i>
+          </button>
+        `;
+
+        insuranceContainer.appendChild(newItem);
+
+        // 添加删除事件
+        newItem.querySelector('.remove-insurance').addEventListener('click', function () {
+          newItem.remove();
+          updateCounters();
+        });
+      });
+
+      // 更新计数器
+      updateCounters();
+    });
 
     // 商家ID计数
     shopIdsInput.addEventListener('input', updateCounters);
@@ -334,18 +475,18 @@
           <i class="fa fa-times-circle"></i>
         </button>
       `;
-      
+
       insuranceContainer.appendChild(newItem);
-      
+
       // 添加删除事件
-      newItem.querySelector('.remove-insurance').addEventListener('click', function() {
+      newItem.querySelector('.remove-insurance').addEventListener('click', function () {
         newItem.remove();
         updateCounters();
       });
-      
+
       // 更新计数器
       updateCounters();
-      
+
       // 聚焦到新输入框
       newItem.querySelector('input').focus();
     });
@@ -354,19 +495,19 @@
     clearBtn.addEventListener('click', () => {
       // 清空商家ID
       shopIdsInput.value = '';
-      
+
       // 清空保险险种，保留一个空的
       const firstInsurance = document.querySelector('.insurance-item');
       insuranceContainer.innerHTML = '';
       insuranceContainer.appendChild(firstInsurance);
       firstInsurance.querySelector('input').value = '';
-      
+
       // 更新计数器
       updateCounters();
-      
+
       // 隐藏结果区域
       resultSection.classList.add('hidden');
-      
+
       // 显示提示
       showToast('已清除所有输入', 'success');
     });
@@ -376,16 +517,16 @@
       // 商家ID计数
       const shopIds = shopIdsInput.value.trim().split(/[\r\n]+/).filter(id => id.trim() !== '');
       idCount.textContent = `${shopIds.length} 个商家ID`;
-      
+
       // 保险险种计数
       const insuranceItems = document.querySelectorAll('.insurance-type');
       const validInsuranceItems = Array.from(insuranceItems).filter(input => input.value.trim() !== '');
       insuranceCount.textContent = `${validInsuranceItems.length} 个保险险种`;
-      
+
       // 计算总组合数
       const total = shopIds.length * validInsuranceItems.length;
       totalCount.textContent = total;
-      
+
       // 更新删除按钮状态
       updateRemoveButtons();
     }
@@ -393,10 +534,10 @@
     // 更新删除按钮状态
     function updateRemoveButtons() {
       const insuranceItems = document.querySelectorAll('.insurance-item');
-      
+
       insuranceItems.forEach((item, index) => {
         const removeBtn = item.querySelector('.remove-insurance');
-        
+
         if (insuranceItems.length > 1) {
           removeBtn.classList.remove('hidden');
         } else {
@@ -411,31 +552,31 @@
     // 处理按钮
     processBtn.addEventListener('click', () => {
       const startTime = performance.now();
-      
+
       // 获取商家ID
       const shopIds = shopIdsInput.value.trim().split(/[\r\n]+/).filter(id => id.trim() !== '');
-      
+
       // 获取保险险种
       const insuranceItems = document.querySelectorAll('.insurance-type');
       const insuranceTypes = Array.from(insuranceItems)
         .map(input => input.value.trim())
         .filter(value => value !== '');
-      
+
       // 验证输入
       if (shopIds.length === 0) {
         showToast('请输入商家ID', 'warning');
         return;
       }
-      
+
       if (insuranceTypes.length === 0) {
         showToast('请输入保险险种', 'warning');
         return;
       }
-      
+
       try {
         // 生成组合结果 - 按保险险种分组
         const results = [];
-        
+
         insuranceTypes.forEach(insuranceType => {
           shopIds.forEach(shopId => {
             results.push({
@@ -447,16 +588,16 @@
             });
           });
         });
-        
+
         // 渲染结果
         renderResults(results);
-        
+
         const endTime = performance.now();
         const timeTaken = Math.round(endTime - startTime);
         processTime.textContent = `处理时间: ${timeTaken}ms`;
-        
+
         resultSection.classList.remove('hidden');
-        
+
         // 滚动到结果区域
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch (error) {
@@ -469,175 +610,138 @@
     copyBtn.addEventListener('click', () => {
       const rows = resultTable.querySelectorAll('tr');
       let text = '保险险种\t保险子险种\t停约客户类型\t停约客户编码\t商家来源\n';
-      
+
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        if (cells.length > 0) {
-          text += `${cells[0].textContent}\t${cells[1].textContent}\t${cells[2].textContent}\t${cells[3].textContent}\t${cells[4].textContent}\n`;
-        }
+        cells.forEach((cell, index) => {
+          text += cell.textContent;
+          if (index < cells.length - 1) {
+            text += '\t';
+          }
+        });
+        text += '\n';
       });
-      
+
       navigator.clipboard.writeText(text).then(() => {
         showToast('结果已复制到剪贴板', 'success');
       }).catch(err => {
+        console.error('复制失败:', err);
         showToast('复制失败，请重试', 'error');
-        console.error('复制失败: ', err);
       });
     });
 
-    // 导出Excel按钮
+    // 下载按钮
     downloadBtn.addEventListener('click', () => {
       const rows = resultTable.querySelectorAll('tr');
       const data = [];
-      
-      // 添加表头
-      data.push(['保险险种', '保险子险种', '停约客户类型', '停约客户编码', '商家来源']);
-      
-      // 添加数据行
+      const headers = ['保险险种', '保险子险种', '停约客户类型', '停约客户编码', '商家来源'];
+      data.push(headers);
+
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        if (cells.length > 0) {
-          data.push([
-            cells[0].textContent, 
-            cells[1].textContent, 
-            cells[2].textContent, 
-            cells[3].textContent, 
-            cells[4].textContent
-          ]);
+        const rowData = [];
+        cells.forEach(cell => {
+          rowData.push(cell.textContent);
+        });
+        if (rowData.length > 0) {
+          data.push(rowData);
         }
       });
-      
-      try {
-        // 创建工作簿
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "商家数据");
-        
-        // 设置列宽
-        const wscols = [
-          {wch: 12},  // 保险险种列宽
-          {wch: 12},  // 保险子险种列宽
-          {wch: 12},  // 停约客户类型列宽
-          {wch: 16},  // 停约客户编码列宽
-          {wch: 12}   // 商家来源列宽
-        ];
-        ws['!cols'] = wscols;
-        
-        // 导出Excel文件
-        XLSX.writeFile(wb, `商家数据_${new Date().toISOString().slice(0,10)}.xlsx`);
-        showToast('Excel文件已下载', 'success');
-      } catch (error) {
-        console.error('导出Excel出错:', error);
-        showToast('导出Excel失败，请重试', 'error');
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+      function s2ab(s) {
+        const buf = new ArrayBuffer(s.length);
+        const view = new Uint8Array(buf);
+        for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
       }
+
+      const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '商家险批量解约.xlsx';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
-    // 显示提示消息
-    function showToast(message, type = 'success') {
+    // 显示提示信息
+    function showToast(message, type) {
       toastMessage.textContent = message;
-      
-      // 设置提示类型样式
+      toast.classList.remove('opacity-0', 'translate-y-20');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
       if (type === 'success') {
-        toast.classList.remove('bg-danger', 'bg-warning');
-        toast.classList.add('bg-success');
-      } else if (type === 'error') {
-        toast.classList.remove('bg-success', 'bg-warning');
-        toast.classList.add('bg-danger');
+        toast.style.backgroundColor = '#00B42A';
       } else if (type === 'warning') {
-        toast.classList.remove('bg-success', 'bg-danger');
-        toast.classList.add('bg-warning');
+        toast.style.backgroundColor = '#FF7D00';
+      } else if (type === 'error') {
+        toast.style.backgroundColor = '#F53F3F';
       }
-      
-      // 显示提示
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      
-      // 3秒后隐藏提示
+
       setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-20');
       }, 3000);
     }
 
-    // 渲染结果表格
+    // 渲染结果
     function renderResults(results) {
       resultTable.innerHTML = '';
-      
+
       if (results.length === 0) {
         emptyResult.classList.remove('hidden');
         resultSummary.classList.add('hidden');
-        return;
-      }
-      
-      emptyResult.classList.add('hidden');
-      resultSummary.classList.remove('hidden');
-      resultCount.textContent = results.length;
-      
-      results.forEach((item, index) => {
-        const row = document.createElement('tr');
-        row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-        
-        row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">${item.insuranceType}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200 bg-gray-50"></td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.customerType}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark">${item.customerCode}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.source}</td>
-        `;
-        
-        resultTable.appendChild(row);
-      });
-    }
-
-    // 主题切换功能
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
-      
-      if (isDark) {
-        document.body.classList.add('bg-gray-900', 'text-white');
-        document.body.classList.remove('bg-gray-50', 'text-dark');
-        themeToggle.innerHTML = '<i class="fa fa-sun-o text-yellow-400"></i>';
-        document.querySelector('header').classList.remove('gradient-bg');
-        document.querySelector('header').classList.add('bg-gray-800');
       } else {
-        document.body.classList.remove('bg-gray-900', 'text-white');
-        document.body.classList.add('bg-gray-50', 'text-dark');
-        themeToggle.innerHTML = '<i class="fa fa-moon-o text-gray-dark"></i>';
-        document.querySelector('header').classList.add('gradient-bg');
-        document.querySelector('header').classList.remove('bg-gray-800');
+        emptyResult.classList.add('hidden');
+        resultSummary.classList.remove('hidden');
+
+        results.forEach(result => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">${result.insuranceType}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${result.subInsuranceType}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${result.customerType}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${result.customerCode}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${result.source}</td>
+          `;
+          resultTable.appendChild(row);
+        });
+
+        resultCount.textContent = results.length;
       }
-    });
+    }
 
     // 提取商家ID按钮
     extractShopIdsBtn.addEventListener('click', () => {
       const inputText = shopIdsInput.value;
-      
-      // 匹配所有连续数字
-      const allNumbers = inputText.match(/\d+/g) || [];
-      
-      // 过滤掉可能是"店铺ID+数字"的情况
-      const validShopIds = allNumbers.filter((id, index, array) => {
-        // 如果当前ID后面还有ID，并且长度小于等于4（可能是店铺ID）
-        // 同时下一个ID长度大于4（可能是店铺ID后面的数字），则排除当前ID
-        if (index < array.length - 1 && id.length <= 4 && array[index + 1].length > 4) {
-          return false;
-        }
-        
-        // 排除长度过短的ID（可根据实际情况调整）
-        return id.length > 2;
-      });
-      
-      shopIdsInput.value = validShopIds.join('\n');
-      updateCounters();
-      showToast('商家ID提取成功', 'success');
+      const ids = inputText.match(/\d+/g);
+      if (ids) {
+        shopIdsInput.value = ids.join('\n');
+        updateCounters();
+        showToast('商家ID提取成功', 'success');
+      } else {
+        showToast('未找到有效的商家ID', 'warning');
+      }
     });
 
-    // 初始化
-    updateCounters();
-  </script>
-<!-- 新增返回按钮 -->
-<a href="home.html" class="fixed bottom-6 right-6 z-50 bg-danger text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-transform hover:scale-105 flex items-center justify-center">
-    <i class="fa fa-arrow-left mr-2"></i> 返回首页
-</a>
+    // 主题切换按钮
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('bg-gray-50');
+      document.body.classList.toggle('bg-dark');
+      document.body.classList.toggle('text-white');
 
+      if (document.body.classList.contains('bg-dark')) {
+        themeToggle.innerHTML = '<i class="fa fa-sun-o"></i>';
+      } else {
+        themeToggle.innerHTML = '<i class="fa fa-moon-o"></i>';
+      }
+    });
+  </script>
 </body>
+
 </html>
