@@ -417,7 +417,7 @@
             "店铺限商品东券", "自营商家联合按比例承担优惠劵", "联合优惠券", "店铺京券", 
             "限品类京券", "限SKU礼金", "返现", "送京豆", 
             "返红包", "返京券", "膨胀金优惠", "PLUS会员专享立减", "店铺首购礼金", 
-            "普通东券", "官方立减", "单品折扣", "国家以旧换新补贴","订单改价-减少", "政府补贴（含国补、云闪付国补等）", "膨胀金-权益金-pop商家承担"
+            "普通东券", "官方立减", "单品折扣", "国家以旧换新补贴","订单改价-减少", "政府补贴（含国补、云闪付国补等）"
         ];
         
         // DOM 加载完成后执行
@@ -557,6 +557,11 @@ function parseDiscountsText(orderType, text) {
             }
             // 将负数转换为正数
             amount = Math.abs(amount);
+        } else if (type === "店铺首购礼金") {
+            if (orderType === "comparison") {
+                invalidDiscounts.push({ line, error: '比价订单中不应包含"店铺首购礼金"优惠' });
+                return;
+            }
         } else if (!discountTypes.includes(type)) {
             invalidDiscounts.push({ line, error: '无效的优惠类型' });
             return;
