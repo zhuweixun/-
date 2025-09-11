@@ -214,6 +214,13 @@
               <span>停约所有险种</span>
             </label>
           </div>
+          
+          <!-- 新增的备注说明 -->
+          <div class="mt-4 bg-gray-50 p-3 rounded-lg text-sm text-gray-dark">
+            <p class="mb-1"><strong>仅保留当前险种：</strong>保险险种栏需填写产品id（指定店铺指定险种保留，其他全解约）</p>
+            <p class="mb-1"><strong>仅停约当前险种：</strong>保险险种栏需填写产品id（指定店铺指定险种解约）</p>
+            <p><strong>停约所有险种：</strong>保险险种栏可以不用填写，系统默认所有在约产品均解约</p>
+          </div>
         </div>
 
         <!-- 商家ID部分 -->
@@ -544,8 +551,16 @@
       const validInsuranceItems = Array.from(insuranceItems).filter(input => input.value.trim() !== '');
       insuranceCount.textContent = `${validInsuranceItems.length} 个保险险种`;
 
-      // 计算总组合数
-      const total = shopIds.length * validInsuranceItems.length;
+      // 获取选择的解约规则
+      const terminationRule = document.querySelector('input[name="termination-rule"]:checked').value;
+      
+      // 计算总组合数 - 停约所有险种时只算商家数量
+      let total;
+      if (terminationRule === '停约所有险种') {
+        total = shopIds.length;
+      } else {
+        total = shopIds.length * validInsuranceItems.length;
+      }
       totalCount.textContent = total;
 
       // 更新删除按钮状态
@@ -569,6 +584,11 @@
 
     // 监听保险险种输入变化
     insuranceContainer.addEventListener('input', updateCounters);
+    
+    // 监听解约规则变化，更新计数器
+    document.querySelectorAll('input[name="termination-rule"]').forEach(radio => {
+      radio.addEventListener('change', updateCounters);
+    });
 
     // 处理按钮
     processBtn.addEventListener('click', () => {
@@ -583,28 +603,30 @@
         .map(input => input.value.trim())
         .filter(value => value !== '');
 
+      // 获取选择的解约规则
+      const terminationRule = document.querySelector('input[name="termination-rule"]:checked').value;
+
       // 验证输入
       if (shopIds.length === 0) {
         showToast('请输入商家ID', 'warning');
         return;
       }
 
-      if (insuranceTypes.length === 0) {
+      // 非"停约所有险种"时才需要验证保险险种
+      if (terminationRule !== '停约所有险种' && insuranceTypes.length === 0) {
         showToast('请输入保险险种', 'warning');
         return;
       }
 
       try {
-        // 获取选择的解约规则
-        const terminationRule = document.querySelector('input[name="termination-rule"]:checked').value;
-        
-        // 生成组合结果 - 按保险险种分组
+        // 生成组合结果
         const results = [];
 
-        insuranceTypes.forEach(insuranceType => {
+        if (terminationRule === '停约所有险种') {
+          // 停约所有险种 - 保险险种为空，每个商家只生成一条记录
           shopIds.forEach(shopId => {
             results.push({
-              insuranceType: insuranceType,
+              insuranceType: '',
               subInsuranceType: '',
               customerType: '商家',
               customerCode: shopId,
@@ -612,7 +634,21 @@
               terminationRule: terminationRule
             });
           });
-        });
+        } else {
+          // 其他规则 - 按保险险种和商家ID组合生成
+          insuranceTypes.forEach(insuranceType => {
+            shopIds.forEach(shopId => {
+              results.push({
+                insuranceType: insuranceType,
+                subInsuranceType: '',
+                customerType: '商家',
+                customerCode: shopId,
+                source: '京麦',
+                terminationRule: terminationRule
+              });
+            });
+          });
+        }
 
         // 渲染结果
         renderResults(results);
