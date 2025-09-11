@@ -197,6 +197,25 @@
           </div>
         </div>
 
+        <!-- 解约规则选择部分 -->
+        <div class="mb-8">
+          <label class="block text-sm font-medium text-dark mb-2">解约规则</label>
+          <div class="flex flex-wrap gap-3">
+            <label class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" name="termination-rule" value="仅保留当前险种" class="mr-2" checked>
+              <span>仅保留当前险种</span>
+            </label>
+            <label class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" name="termination-rule" value="仅停约当前险种" class="mr-2">
+              <span>仅停约当前险种</span>
+            </label>
+            <label class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" name="termination-rule" value="停约所有险种" class="mr-2">
+              <span>停约所有险种</span>
+            </label>
+          </div>
+        </div>
+
         <!-- 商家ID部分 -->
         <div class="mb-6">
           <div class="flex justify-between items-center mb-2">
@@ -576,6 +595,9 @@
       }
 
       try {
+        // 获取选择的解约规则
+        const terminationRule = document.querySelector('input[name="termination-rule"]:checked').value;
+        
         // 生成组合结果 - 按保险险种分组
         const results = [];
 
@@ -586,7 +608,8 @@
               subInsuranceType: '',
               customerType: '商家',
               customerCode: shopId,
-              source: '京麦'
+              source: '京麦',
+              terminationRule: terminationRule
             });
           });
         });
@@ -636,7 +659,7 @@
     downloadBtn.addEventListener('click', () => {
       const rows = resultTable.querySelectorAll('tr');
       const data = [];
-      const headers = ['保险险种', '保险子险种', '停约客户类型', '停约客户编码', '商家来源'];
+      const headers = ['保险险种', '保险子险种', '停约客户类型', '停约客户编码', '商家来源', '解约规则'];
       data.push(headers);
 
       rows.forEach(row => {
@@ -710,6 +733,7 @@
             <td class="px-6 py-4 whitespace-nowrap">${result.customerType}</td>
             <td class="px-6 py-4 whitespace-nowrap">${result.customerCode}</td>
             <td class="px-6 py-4 whitespace-nowrap">${result.source}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${result.terminationRule}</td>
           `;
           resultTable.appendChild(row);
         });
